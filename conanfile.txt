@@ -10,7 +10,11 @@ hiredis/1.2.0
 libuv/1.49.2
 redis-plus-plus/1.3.13
 pybind11/2.13.6
+abseil/20240116.2
 
 [generators]
 PkgConfigDeps
+
+[options]
+abseil/*:shared=False  # 如果使用动态库
 

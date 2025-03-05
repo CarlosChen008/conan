@@ -29,6 +29,9 @@ test_rapidjson:
 test_redis:
 	$(CC) test_redis++.cpp -o test_redis++.bin -DREDIS_PLUS_PLUS_BUILD_ASYNC=libuv $(shell pkg-config --cflags --libs libuv-static redis++)
 
+test_abseil:
+	$(CC) test_abseil.cpp -o test_absl.bin $(shell pkg-config --cflags --libs abseil)
+
 test_pybind11:
 	g++ -std=c++17 -O3 -Wall -shared -fPIC -pthread test_pybind11.cpp -o test_pybind11.so $(shell python3 -m pybind11 --includes)
 
