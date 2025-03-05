@@ -19,3 +19,12 @@
 动态库（.so 文件）：动态库的符号解析发生在运行时，因此链接顺序对动态库的影响较小。
 
 在静态库的情况下，链接顺序的影响尤为明显。
+
+3. 使用 ld 的 --start-group 和 --end-group 选项
+这些选项可以告诉链接器在指定的库组内进行多次扫描，以确保所有符号都能被正确解析。这在处理复杂的依赖关系时非常有用。
+    g++ -Wl,--start-group -lfoo -lbar -Wl,--end-group -o myapp main.o utils.o
+
+4. 使用 pkg-config 来管理依赖
+如果你的项目依赖于多个外部库，可以使用 pkg-config 来管理这些依赖。pkg-config 会自动处理链接顺序和标志。
+    g++ `pkg-config --cflags --libs foo bar` -o myapp main.o utils.o
+
