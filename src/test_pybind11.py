@@ -1,5 +1,5 @@
-import test_pybind11 as example
+import test_pybind11
 
-result = example.add(2, 3)
+result = test_pybind11.add(2, 3)
 print(result)  # 输出: 5
 
