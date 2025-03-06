@@ -10,15 +10,15 @@ GRPC_DEPS := $(shell pkg-config --cflags --libs grpc++ protobuf)
 all: proto test_spdlog test_rapidjson test_redis test_pybind11
 
 proto:
-	../bin/protoc --cpp_out=. helloworld.proto
-	../bin/protoc --grpc_out=. --plugin=protoc-gen-grpc=../bin/grpc_cpp_plugin helloworld.proto
+	../bin/protoc --cpp_out=. ./proto/helloworld.proto
+	../bin/protoc --grpc_out=. --plugin=protoc-gen-grpc=../bin/grpc_cpp_plugin ./proto/helloworld.proto
 
 server:
 	@echo "Using shell: $(SHELL)"
-	$(CC) server.cpp helloworld.pb.cc helloworld.grpc.pb.cc -Wl,--start-group ${GRPC_DEPS} -Wl,--end-group -o server.bin
+	$(CC) server.cpp ./proto/helloworld.pb.cc ./proto/helloworld.grpc.pb.cc -Wl,--start-group ${GRPC_DEPS} -Wl,--end-group -o server.bin
 
 client:
-	$(CC) client.cpp helloworld.pb.cc helloworld.grpc.pb.cc -Wl,--start-group ${GRPC_DEPS} -Wl,--end-group -o client.bin
+	$(CC) client.cpp ./proto/helloworld.pb.cc ./proto/helloworld.grpc.pb.cc -Wl,--start-group ${GRPC_DEPS} -Wl,--end-group -o client.bin
 
 test_spdlog:
 	$(CC) test_spdlog.cpp -o test_spdlog.bin $(shell pkg-config --cflags --libs spdlog)
@@ -35,5 +35,9 @@ test_abseil:
 test_pybind11:
 	g++ -std=c++17 -O3 -Wall -shared -fPIC -pthread test_pybind11.cpp -o test_pybind11.so $(shell python3 -m pybind11 --includes)
 
+test_libnpy:
+	$(CC) test_libnpy.cpp $(shell pkg-config --cflags --libs libnpy) -o test_libnpy.bin
+
 clean:
-	rm -rf *.bin *.o *.so *.pb.cc *.pb.h
+	rm -rf *.bin *.o *.so proto/*.pb.cc proto/*.pb.h
+
