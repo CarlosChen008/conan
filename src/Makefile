@@ -15,10 +15,10 @@ proto:
 
 server:
 	@echo "Using shell: $(SHELL)"
-	$(CC) server.cpp ./proto/helloworld.pb.cc ./proto/helloworld.grpc.pb.cc -Wl,--start-group ${GRPC_DEPS} -Wl,--end-group -o server.bin
+	$(CC) server.cpp ./proto/helloworld.pb.cc ./proto/helloworld.grpc.pb.cc -I. -Wl,--start-group ${GRPC_DEPS} -Wl,--end-group -o server.bin
 
 client:
-	$(CC) client.cpp ./proto/helloworld.pb.cc ./proto/helloworld.grpc.pb.cc -Wl,--start-group ${GRPC_DEPS} -Wl,--end-group -o client.bin
+	$(CC) client.cpp ./proto/helloworld.pb.cc ./proto/helloworld.grpc.pb.cc -I. -Wl,--start-group ${GRPC_DEPS} -Wl,--end-group -o client.bin
 
 test_spdlog:
 	$(CC) test_spdlog.cpp -o test_spdlog.bin $(shell pkg-config --cflags --libs spdlog)
