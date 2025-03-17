@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-export PKG_CONFIG_PATH := /home/carlos/workspace/conan/build
+export PKG_CONFIG_PATH := /home/chenliguo/workspace/conan/build
 
 CC := g++ -std=c++17 -O3 -fPIC -Wl,--as-needed -static
 
