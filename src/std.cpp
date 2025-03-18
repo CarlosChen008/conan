@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <string>
 #include <algorithm>
+#include <queue> // 添加优先队列头文件
 
 int main() {
     // Vector demo
@@ -158,6 +159,186 @@ int main() {
         std::cout << elem << " "; // 输出当前元素
     }
     std::cout << std::endl; // 输出换行符
+
+    // Priority Queue demo
+    std::priority_queue<int> pq; // 创建一个空的优先队列, O(1)
+    pq.push(5); // 向优先队列中插入元素5, O(log n)
+    pq.push(1); // 向优先队列中插入元素1, O(log n)
+    pq.push(3); // 向优先队列中插入元素3, O(log n)
+    pq.push(4); // 向优先队列中插入元素4, O(log n)
+    pq.push(2); // 向优先队列中插入元素2, O(log n)
+
+    std::cout << "Priority Queue elements (in descending order): "; // 输出提示信息
+    while (!pq.empty()) { // 当优先队列不为空时, O(n log n)
+        std::cout << pq.top() << " "; // 输出优先队列的顶部元素, O(1)
+        pq.pop(); // 移除优先队列的顶部元素, O(log n)
+    }
+    std::cout << std::endl; // 输出换行符
+
+    /*
+        优先队列的实现:
+        1. 优先队列通常使用堆（heap）数据结构实现，C++标准库中的优先队列使用最大堆。
+        2. 最大堆是一种完全二叉树，其中每个节点的值都大于或等于其子节点的值。
+        3. 插入和删除操作的时间复杂度为O(log n)，访问顶部元素的时间复杂度为O(1)。
+    */
+
+    // stack
+    std::stack<int> stck; // 创建一个空的栈, O(1)
+    stck.push(1); // 向栈中插入元素1, O(1)
+    stck.push(2); // 向栈中插入元素2, O(1)
+    stck.push(3); // 向栈中插入元素3, O(1)
+    std::cout << "Stack top element: " << stck.top() << std::endl; // 输出栈顶元素, O(1)
+    stck.pop(); // 移除栈顶元素, O(1)
+    std::cout << "Stack top element after pop: " << stck.top() << std::endl; // 输出栈顶元素, O(1)
+    stck.pop(); // 移除栈顶元素, O(1)
+    std::cout << "Stack top element after pop: " << stck.top() << std::endl; // 输出栈顶元素, O(1)
+    stck.pop(); // 移除栈顶元素, O(1)
+    /*
+        stack的实现:
+        1. 栈通常使用链表或动态数组实现。
+        2. 链表实现的栈在插入和删除操作上性能更好，因为它不需要移动其他元素。
+        3. 动态数组实现的栈在内存使用上更高效，但在扩展时可能需要移动其他元素。
+    */
+    // queue
+    std::queue<int> que; // 创建一个空的队列, O(1)
+    que.push(1); // 向队列中插入元素1, O(1)
+    que.push(2); // 向队列中插入元素2, O(1)
+    que.push(3); // 向队列中插入元素3, O(1)
+    std::cout << "Queue front element: " << que.front() << std::endl; // 输出队列前端元素, O(1)
+    que.pop(); // 移除队列前端元素, O(1)
+    std::cout << "Queue front element after pop: " << que.front() << std::endl; // 输出队列前端元素, O(1)
+    que.pop(); // 移除队列前端元素, O(1)
+    std::cout << "Queue front element after pop: " << que.front() << std::endl; // 输出队列前端元素, O(1)
+    que.pop(); // 移除队列前端元素, O(1)
+    /*
+        queue的实现:
+        1. 队列通常使用链表或动态数组实现。
+        2. 链表实现的队列在插入和删除操作上性能更好，因为它不需要移动其他元素。
+        3. 动态数组实现的队列在内存使用上更高效，但在扩展时可能需要移动其他元素。
+    */
+    /*
+        stack vs queue:
+        1. stack是后进先出（LIFO）的数据结构，queue是先进先出（FIFO）的数据结构。
+        2. stack支持push和pop操作，queue支持push和pop操作。
+        3. stack的top操作返回栈顶元素，queue的front操作返回队列前端元素。
+    */
+    /*
+        stack的优点：
+        1. 支持后进先出的数据访问模式，适合处理递归和回溯问题。
+        2. 实现简单，内存使用高效。
+
+        stack的缺点：
+        1. 不支持随机访问，只能访问栈顶元素。
+        2. 在需要频繁插入和删除操作时性能较差。
+
+        queue的优点：
+        1. 支持先进先出的数据访问模式，适合处理排队和调度问题。
+        2. 实现简单，内存使用高效。
+
+        queue的缺点：
+        1. 不支持随机访问，只能访问队列前端元素。
+        2. 在需要频繁插入和删除操作时性能较差。
+    */
+   // 使用 list 实现队列
+    std::list<int> lque; // 创建一个空的列表作为队列, O(1)
+    lque.push_back(1); // 向队列中插入元素1, O(1)
+    lque.push_back(2); // 向队列中插入元素2, O(1)
+    lque.push_back(3); // 向队列中插入元素3, O(1)
+    std::cout << "List Queue front element: " << lque.front() << std::endl; // 输出队列前端元素, O(1)
+    lque.pop_front(); // 移除队列前端元素, O(1)
+    std::cout << "List Queue front element after pop: " << lque.front() << std::endl; // 输出队列前端元素, O(1)
+    lque.pop_front(); // 移除队列前端元素, O(1)
+    std::cout << "List Queue front element after pop: " << lque.front() << std::endl; // 输出队列前端元素, O(1)
+    lque.pop_front(); // 移除队列前端元素, O(1)
+    /*
+        使用 list 实现队列的优点：
+        1. 支持在两端快速插入和删除元素。
+        2. 内存使用效率高，因为它使用连续的内存块。
+
+        使用 list 实现队列的缺点：
+        1. 相比于 vector，list 的内存开销更大，因为它需要维护多个小数组。
+        2. 在中间插入和删除元素时性能较差。
+    */
+    // 使用 list 实现栈
+    std::list<int> lstck; // 创建一个空的列表作为栈, O(1)
+    lstck.push_back(1); // 向栈中插入元素1, O(1)
+    lstck.push_back(2); // 向栈中插入元素2, O(1)
+    lstck.push_back(3); // 向栈中插入元素3, O(1)
+    std::cout << "List Stack top element: " << lstck.back() << std::endl; // 输出栈顶元素, O(1)
+    lstck.pop_back(); // 移除栈顶元素, O(1)
+    std::cout << "List Stack top element after pop: " << lstck.back() << std::endl; // 输出栈顶元素, O(1)
+    lstck.pop_back(); // 移除栈顶元素, O(1)
+    std::cout << "List Stack top element after pop: " << lstck.back() << std::endl; // 输出栈顶元素, O(1)
+    lstck.pop_back(); // 移除栈顶元素, O(1)
+    /*
+        使用 list 实现栈的优点：
+        1. 支持后进先出的数据访问模式，适合处理递归和回溯问题。
+        2. 内存使用效率高，因为它使用连续的内存块。
+
+        使用 list 实现栈的缺点：
+        1. 相比于 vector，list 的内存开销更大，因为它需要维护多个小数组。
+        2. 在中间插入和删除元素时性能较差。
+    */
+    // 使用 deque 实现栈
+    std::deque<int> dstack; // 创建一个空的双端队列作为栈, O(1)
+    dstack.push_back(1); // 向栈中插入元素1, O(1)
+    dstack.push_back(2); // 向栈中插入元素2, O(1)
+    dstack.push_back(3); // 向栈中插入元素3, O(1)
+    std::cout << "Deque Stack top element: " << dstack.back() << std::endl; // 输出栈顶元素, O(1)
+    dstack.pop_back(); // 移除栈顶元素, O(1)
+    std::cout << "Deque Stack top element after pop: " << dstack.back() << std::endl; // 输出栈顶元素, O(1)
+    dstack.pop_back(); // 移除栈顶元素, O(1)
+    std::cout << "Deque Stack top element after pop: " << dstack.back() << std::endl; // 输出栈顶元素, O(1)
+    dstack.pop_back(); // 移除栈顶元素, O(1)
+    /*
+        使用 deque 实现栈的优点：
+        1. 支持后进先出的数据访问模式，适合处理递归和回溯问题。
+        2. 内存使用效率高，因为它使用连续的内存块。
+
+        使用 deque 实现栈的缺点：
+        1. 相比于 vector，deque 的内存开销更大，因为它需要维护多个小数组。
+        2. 在中间插入和删除元素时性能较差。
+    */
+    // 使用 deque 实现队列
+    std::deque<int> dque; // 创建一个空的双端队列作为队列, O(1)
+    dque.push_back(1); // 向队列中插入元素1, O(1)
+    dque.push_back(2); // 向队列中插入元素2, O(1)
+    dque.push_back(3); // 向队列中插入元素3, O(1)
+    std::cout << "Deque Queue front element: " << dque.front() << std::endl; // 输出队列前端元素, O(1)
+    dque.pop_front(); // 移除队列前端元素, O(1)
+    std::cout << "Deque Queue front element after pop: " << dque.front() << std::endl; // 输出队列前端元素, O(1)
+    dque.pop_front(); // 移除队列前端元素, O(1)
+    std::cout << "Deque Queue front element after pop: " << dque.front() << std::endl; // 输出队列前端元素, O(1)
+    dque.pop_front(); // 移除队列前端元素, O(1)
+    /*
+        使用 deque 实现队列的优点：
+        1. 支持在两端快速插入和删除元素。
+        2. 内存使用效率高，因为它使用连续的内存块。
+
+        使用 deque 实现队列的缺点：
+        1. 相比于 vector，deque 的内存开销更大，因为它需要维护多个小数组。
+        2. 在中间插入和删除元素时性能较差。
+    */
+    // 使用 vector 实现栈
+    std::vector<int> vstack; // 创建一个空的向量作为栈, O(1)
+    vstack.push_back(1); // 向栈中插入元素1, O(1)
+    vstack.push_back(2); // 向栈中插入元素2, O(1)
+    vstack.push_back(3); // 向栈中插入元素3, O(1)
+    std::cout << "Vector Stack top element: " << vstack.back() << std::endl; // 输出栈顶元素, O(1)
+    vstack.pop_back(); // 移除栈顶元素, O(1)
+    std::cout << "Vector Stack top element after pop: " << vstack.back() << std::endl; // 输出栈顶元素, O(1)
+    vstack.pop_back(); // 移除栈顶元素, O(1)
+    std::cout << "Vector Stack top element after pop: " << vstack.back() << std::endl; // 输出栈顶元素, O(1)
+    vstack.pop_back(); // 移除栈顶元素, O(1)
+    /*
+        使用 vector 实现栈的优点：
+        1. 支持后进先出的数据访问模式，适合处理递归和回溯问题。
+        2. 内存使用效率高，因为它使用连续的内存块。
+
+        使用 vector 实现栈的缺点：
+        1. 相比于 list，vector 的内存开销更大，因为它需要维护多个小数组。
+        2. 在中间插入和删除元素时性能较差。
+    */
 
     return 0;
 }
