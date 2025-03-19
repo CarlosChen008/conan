@@ -321,3 +321,4 @@ logs/daily_log_2025-03-17.log
 .vscode/settings.json
 src/std.bin
 scripts/__pycache__/collections.cpython-312.pyc
+src/lru.bin
