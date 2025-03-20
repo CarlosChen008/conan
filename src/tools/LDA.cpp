@@ -96,6 +96,50 @@ public:
         }
     }
 
+    // 保存文档主题分布
+    void save_doc_topics(const string& filename) const {
+        ofstream file(filename);
+        if (!file.is_open()) {
+            cerr << "Error: Could not open file for writing: " << filename << endl;
+            return;
+        }
+        
+        for (size_t d = 0; d < doc_topic_count.size(); ++d) {
+            for (int k = 0; k < num_topics; ++k) {
+                double prob = (doc_topic_count[d][k] + alpha) / 
+                            (doc_count[d] + num_topics * alpha);
+                file << prob;
+                if (k < num_topics - 1) file << "\t";
+            }
+            file << endl;
+        }
+    }
+
+    // 保存主题词分布
+    void save_topic_words(const string& filename) const {
+        ofstream file(filename);
+        if (!file.is_open()) {
+            cerr << "Error: Could not open file for writing: " << filename << endl;
+            return;
+        }
+
+        for (int k = 0; k < num_topics; ++k) {
+            vector<pair<int, double>> word_probs;
+            for (const auto& [word_id, count] : topic_word_count[k]) {
+                double prob = (count + beta) / (topic_count[k] + vocab_size * beta);
+                word_probs.emplace_back(word_id, prob);
+            }
+            
+            sort(word_probs.begin(), word_probs.end(),
+                [](const auto& a, const auto& b) { return a.second > b.second; });
+
+            for (const auto& [word_id, prob] : word_probs) {
+                file << id2word.at(word_id) << ":" << prob << "\t";
+            }
+            file << endl;
+        }
+    }
+
 private:
     int num_topics;
     int num_iterations;
@@ -163,10 +207,12 @@ struct LDAConfig {
     double alpha;
     double beta;
     string train_file;
+    string doc_topic_file;    // 新增：文档主题分布输出路径
+    string topic_word_file;   // 新增：主题词分布输出路径
 };
 
 LDAConfig read_config(const string& config_file) {
-    LDAConfig config = {0, 0, 0.0, 0.0, ""};  // 初始化所有值为0
+    LDAConfig config = {0, 0, 0.0, 0.0, "", "", ""};  // 初始化所有值
     ifstream file(config_file);
     if (!file.is_open()) {
         cerr << "Error: Could not open config file: " << config_file << endl;
@@ -200,6 +246,8 @@ LDAConfig read_config(const string& config_file) {
             else if (key == "alpha") config.alpha = stod(value);
             else if (key == "beta") config.beta = stod(value);
             else if (key == "train_file") config.train_file = value;
+            else if (key == "doc_topic_file") config.doc_topic_file = value;
+            else if (key == "topic_word_file") config.topic_word_file = value;
         } catch (const exception& e) {
             cerr << "Error parsing value for key '" << key << "': " << e.what() << endl;
             exit(1);
@@ -293,6 +341,16 @@ int main(int argc, char* argv[]) {
     lda.fit(documents);
     cout << "\nTraining completed. Topic results:" << endl;
     lda.print_topics();
+
+    // 保存结果到文件
+    if (!config.doc_topic_file.empty()) {
+        cout << "Saving document-topic distribution to " << config.doc_topic_file << endl;
+        lda.save_doc_topics(config.doc_topic_file);
+    }
+    if (!config.topic_word_file.empty()) {
+        cout << "Saving topic-word distribution to " << config.topic_word_file << endl;
+        lda.save_topic_words(config.topic_word_file);
+    }
 
     return 0;
 }
