@@ -5,6 +5,11 @@
 #include <openssl/pem.h>
 #include <openssl/err.h>
 #include <openssl/des.h>
+#include <openssl/md5.h>
+#include <openssl/sha.h>
+#include <vector>
+#include <openssl/bio.h>
+#include <openssl/evp.h>
 
 class CryptoToolbox {
 public:
@@ -169,6 +174,126 @@ public:
     static std::string CaesarDecrypt(const std::string &cipherText, int shift) {
         return CaesarEncrypt(cipherText, 26 - shift);
     }
+
+    // MD5 Hash
+    static std::string MD5Hash(const std::string &input) {
+        unsigned char hash[MD5_DIGEST_LENGTH];
+        MD5(reinterpret_cast<const unsigned char*>(input.c_str()), input.size(), hash);
+        std::string output;
+        for (int i = 0; i < MD5_DIGEST_LENGTH; ++i) {
+            char buf[3];
+            snprintf(buf, sizeof(buf), "%02x", hash[i]);
+            output.append(buf);
+        }
+        return output;
+    }
+
+    // SHA1 Hash
+    static std::string SHA1Hash(const std::string &input) {
+        unsigned char hash[SHA_DIGEST_LENGTH];
+        SHA1(reinterpret_cast<const unsigned char*>(input.c_str()), input.size(), hash);
+        std::string output;
+        for (int i = 0; i < SHA_DIGEST_LENGTH; ++i) {
+            char buf[3];
+            snprintf(buf, sizeof(buf), "%02x", hash[i]);
+            output.append(buf);
+        }
+        return output;
+    }
+
+    // SHA256 Hash
+    static std::string SHA256Hash(const std::string &input) {
+        unsigned char hash[SHA256_DIGEST_LENGTH];
+        SHA256(reinterpret_cast<const unsigned char*>(input.c_str()), input.size(), hash);
+        std::string output;
+        for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
+            char buf[3];
+            snprintf(buf, sizeof(buf), "%02x", hash[i]);
+            output.append(buf);
+        }
+        return output;
+    }
+
+    // Hill Cipher Encryption
+    static std::string HillEncrypt(const std::string &plainText, const std::vector<std::vector<int>> &keyMatrix) {
+        int n = keyMatrix.size();
+        std::string cipherText;
+        for (size_t i = 0; i < plainText.size(); i += n) {
+            std::vector<int> block(n, 0);
+            for (int j = 0; j < n; ++j) {
+                if (i + j < plainText.size()) {
+                    block[j] = plainText[i + j] - 'A';
+                }
+            }
+            for (int j = 0; j < n; ++j) {
+                int sum = 0;
+                for (int k = 0; k < n; ++k) {
+                    sum += keyMatrix[j][k] * block[k];
+                }
+                cipherText += (sum % 26) + 'A';
+            }
+        }
+        return cipherText;
+    }
+
+    // Hill Cipher Decryption
+    static std::string HillDecrypt(const std::string &cipherText, const std::vector<std::vector<int>> &inverseKeyMatrix) {
+        int n = inverseKeyMatrix.size();
+        std::string plainText;
+        for (size_t i = 0; i < cipherText.size(); i += n) {
+            std::vector<int> block(n, 0);
+            for (int j = 0; j < n; ++j) {
+                if (i + j < cipherText.size()) {
+                    block[j] = cipherText[i + j] - 'A';
+                }
+            }
+            for (int j = 0; j < n; ++j) {
+                int sum = 0;
+                for (int k = 0; k < n; ++k) {
+                    sum += inverseKeyMatrix[j][k] * block[k];
+                }
+                plainText += (sum % 26) + 'A';
+            }
+        }
+        return plainText;
+    }
+
+    // Base64 Encode
+    static std::string Base64Encode(const std::string &input) {
+        BIO *bio, *b64;
+        BUF_MEM *bufferPtr;
+
+        b64 = BIO_new(BIO_f_base64());
+        bio = BIO_new(BIO_s_mem());
+        bio = BIO_push(b64, bio);
+
+        BIO_write(bio, input.c_str(), input.size());
+        BIO_flush(bio);
+        BIO_get_mem_ptr(bio, &bufferPtr);
+
+        std::string encodedData(bufferPtr->data, bufferPtr->length);
+        BIO_free_all(bio);
+
+        return encodedData;
+    }
+
+    // Base64 Decode
+    static std::string Base64Decode(const std::string &input) {
+        BIO *bio, *b64;
+        char *buffer = (char*)malloc(input.size());
+        memset(buffer, 0, input.size());
+
+        b64 = BIO_new(BIO_f_base64());
+        bio = BIO_new_mem_buf(input.c_str(), input.size());
+        bio = BIO_push(b64, bio);
+
+        int decodedLength = BIO_read(bio, buffer, input.size());
+        std::string decodedData(buffer, decodedLength);
+        BIO_free_all(bio);
+        free(buffer);
+
+        return decodedData;
+    }
 };
 
 int main() {
@@ -216,6 +341,34 @@ int main() {
 
     std::cout << "Caesar Encrypted: " << caesarCipherText << std::endl;
     std::cout << "Caesar Decrypted: " << caesarDecryptedText << std::endl;
+
+    // Hash Example usage
+    std::string hashInput = "Hello, Hash!";
+    std::string md5Hash = CryptoToolbox::MD5Hash(hashInput);
+    std::string sha1Hash = CryptoToolbox::SHA1Hash(hashInput);
+    std::string sha256Hash = CryptoToolbox::SHA256Hash(hashInput);
+
+    std::cout << "MD5 Hash: " << md5Hash << std::endl;
+    std::cout << "SHA1 Hash: " << sha1Hash << std::endl;
+    std::cout << "SHA256 Hash: " << sha256Hash << std::endl;
+
+    // Hill Cipher Example usage
+    std::vector<std::vector<int>> keyMatrix = {{6, 24, 1}, {13, 16, 10}, {20, 17, 15}};
+    std::vector<std::vector<int>> inverseKeyMatrix = {{8, 5, 10}, {21, 8, 21}, {21, 12, 8}};
+    std::string hillPlainText = "HELLOHILL";
+    std::string hillCipherText = CryptoToolbox::HillEncrypt(hillPlainText, keyMatrix);
+    std::string hillDecryptedText = CryptoToolbox::HillDecrypt(hillCipherText, inverseKeyMatrix);
+
+    std::cout << "Hill Encrypted: " << hillCipherText << std::endl;
+    std::cout << "Hill Decrypted: " << hillDecryptedText << std::endl;
+
+    // Base64 Example usage
+    std::string base64Input = "Hello, Base64!";
+    std::string base64Encoded = CryptoToolbox::Base64Encode(base64Input);
+    std::string base64Decoded = CryptoToolbox::Base64Decode(base64Encoded);
+
+    std::cout << "Base64 Encoded: " << base64Encoded << std::endl;
+    std::cout << "Base64 Decoded: " << base64Decoded << std::endl;
 
     return 0;
 }
