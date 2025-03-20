@@ -13,7 +13,6 @@ pybind11/2.13.6
 abseil/20240116.2
 libnpy/1.0.1
 openssl/3.4.1
-qt/5.15.16
 
 [generators]
 PkgConfigDeps

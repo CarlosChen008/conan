@@ -21,7 +21,6 @@ public:
                     int topic = topics[d][n];
                     string word = documents[d][n];
                     int word_id = word2id[word];
-
                     // Decrement counts
                     doc_topic_count[d][topic]--;
                     topic_word_count[topic][word_id]--;
