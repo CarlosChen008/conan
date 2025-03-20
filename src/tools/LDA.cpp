@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <random>
 #include <fstream>
+#include <algorithm>  // 添加这一行用于 std::sort
 
 using namespace std;
 
@@ -28,13 +29,14 @@ public:
                     doc_topic_count[d][old_topic]--;
                     topic_word_count[old_topic][word_id]--;
                     topic_count[old_topic]--;
+                    doc_count[d]--;
 
                     // Sample new topic
                     vector<double> p(num_topics);
                     double sum_p = 0.0;
                     for (int k = 0; k < num_topics; ++k) {
-                        p[k] = ((doc_topic_count[d][k] + alpha) / (documents[d].size() + num_topics * alpha)) *
-                            ((topic_word_count[k][word_id] + beta) / (topic_count[k] + beta * vocab_size));
+                        p[k] = ((doc_topic_count[d][k] + alpha) / (doc_count[d] + num_topics * alpha)) *
+                            ((topic_word_count[k][word_id] + beta) / (topic_count[k] + vocab_size * beta));
                         sum_p += p[k];
                     }
                     for (int k = 0; k < num_topics; ++k) {
@@ -52,6 +54,8 @@ public:
                     doc_topic_count[d][new_topic]++;
                     topic_word_count[new_topic][word_id]++;
                     topic_count[new_topic]++;
+                    doc_count[d]++;
+
                 }
             }
             
@@ -68,11 +72,25 @@ public:
     void print_topics() {
         for (int k = 0; k < num_topics; ++k) {
             cout << "Topic " << k << ": ";
-            int top_words = 10; // Number of top words to display
-            for (const auto& word_id : topic_word_count[k]) {
-                cout << id2word[word_id.first] << " ";
+            
+            // 将map转换为vector以便排序
+            vector<pair<int, int>> word_counts;
+            for (const auto& p : topic_word_count[k]) {
+                word_counts.push_back(p);
+            }
+            
+            // 按词频降序排序
+            std::sort(word_counts.begin(), word_counts.end(),
+                [](const pair<int, int>& a, const pair<int, int>& b) {
+                    return a.second > b.second;
+                });
+            
+            // 打印前10个高频词
+            int top_words = 10;
+            for (const auto& p : word_counts) {
+                if (top_words == 0) break;
+                cout << id2word[p.first] << "(" << p.second << ") ";
                 top_words--;
-                if (top_words == 0) break; // Limit the number of words printed
             }
             cout << endl;
         }
@@ -89,6 +107,7 @@ private:
     vector<vector<int>> doc_topic_count;
     vector<unordered_map<int, int>> topic_word_count;
     vector<int> topic_count;
+    vector<int> doc_count;  // 新增：记录每个文档的单词数
 
     unordered_map<string, int> word2id;
     unordered_map<int, string> id2word;
@@ -110,6 +129,7 @@ private:
         doc_topic_count.resize(documents.size(), vector<int>(num_topics, 0));
         topic_word_count.resize(num_topics);
         topic_count.resize(num_topics, 0);
+        doc_count.resize(documents.size(), 0);  // 初始化doc_count
 
         random_device rd;
         mt19937 gen(rd());
@@ -117,6 +137,7 @@ private:
 
         for (size_t d = 0; d < documents.size(); ++d) {
             topics[d].resize(documents[d].size());
+            doc_count[d] = documents[d].size();  // 设置初始文档单词数
             for (size_t n = 0; n < documents[d].size(); ++n) {
                 int topic = dis(gen);
                 topics[d][n] = topic;
