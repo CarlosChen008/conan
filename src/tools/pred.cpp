@@ -3,6 +3,8 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <thread>
+#include <mutex>
 
 struct KLine {
     std::string time;
@@ -47,16 +49,40 @@ std::vector<KLine> readCSV(const std::string& filename) {
 double calculateExpectedReturn(const std::vector<KLine>& data, const std::string& pattern) {
     double totalReturn = 0.0;
     int count = 0;
+    std::mutex mtx;
 
-    for (size_t i = 0; i < data.size() - 5; ++i) {
-        // Example pattern: if the close price is higher than the open price
-        // this indicates a bullish pattern
-        if (pattern == "bullish" && data[i].close > data[i].open) {
-            double return5min = (data[i + 5].close - data[i].close) / data[i].close;
-            totalReturn += return5min;
-            ++count;
+    auto worker = [&](size_t start, size_t end) {
+        double localTotalReturn = 0.0;
+        int localCount = 0;
+
+        for (size_t i = start; i < end; ++i) {
+            // Example pattern: if the close price is higher than the open price
+            // this indicates a bullish pattern
+            if (pattern == "bullish" && data[i].close > data[i].open) {
+                double return5min = (data[i + 5].close - data[i].close) / data[i].close;
+                localTotalReturn += return5min;
+                ++localCount;
+            }
+            // Add more patterns as needed
         }
-        // Add more patterns as needed
+
+        std::lock_guard<std::mutex> lock(mtx);
+        totalReturn += localTotalReturn;
+        count += localCount;
+    };
+
+    size_t numThreads = std::thread::hardware_concurrency();
+    size_t blockSize = (data.size() - 5) / numThreads;
+    std::vector<std::thread> threads;
+
+    for (size_t i = 0; i < numThreads; ++i) {
+        size_t start = i * blockSize;
+        size_t end = (i == numThreads - 1) ? data.size() - 5 : start + blockSize;
+        threads.emplace_back(worker, start, end);
+    }
+
+    for (auto& t : threads) {
+        t.join();
     }
 
     return count > 0 ? totalReturn / count : 0.0;
