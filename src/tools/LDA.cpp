@@ -5,14 +5,17 @@
 #include <unordered_map>
 #include <random>
 #include <fstream>
-#include <algorithm>  // 添加这一行用于 std::sort
+#include <algorithm>
+#include <ctime>  // 添加头文件
 
 using namespace std;
 
 class LDA {
 public:
     LDA(int num_topics, int num_iterations, double alpha, double beta)
-        : num_topics(num_topics), num_iterations(num_iterations), alpha(alpha), beta(beta) {}
+        : num_topics(num_topics), num_iterations(num_iterations), alpha(alpha), beta(beta) {
+        srand(time(nullptr));  // 初始化随机数种子
+    }
 
     void fit(const vector<vector<string>>& documents) {
         initialize(documents);
@@ -175,15 +178,11 @@ private:
         topic_count.resize(num_topics, 0);
         doc_count.resize(documents.size(), 0);  // 初始化doc_count
 
-        random_device rd;
-        mt19937 gen(rd());
-        uniform_int_distribution<> dis(0, num_topics - 1);
-
         for (size_t d = 0; d < documents.size(); ++d) {
             topics[d].resize(documents[d].size());
             doc_count[d] = documents[d].size();  // 设置初始文档单词数
             for (size_t n = 0; n < documents[d].size(); ++n) {
-                int topic = dis(gen);
+                int topic = rand() % num_topics;  // 使用简单的rand()
                 topics[d][n] = topic;
                 doc_topic_count[d][topic]++;
                 topic_word_count[topic][word2id[documents[d][n]]]++;
@@ -194,10 +193,13 @@ private:
     }
 
     int sample(const vector<double>& p) {
-        random_device rd;
-        mt19937 gen(rd());
-        discrete_distribution<> dis(p.begin(), p.end());
-        return dis(gen);
+        double rnd = static_cast<double>(rand()) / RAND_MAX;
+        double sum = 0.0;
+        for (int i = 0; i < num_topics; ++i) {
+            sum += p[i];
+            if (rnd < sum) return i;
+        }
+        return num_topics - 1;
     }
 };
 
