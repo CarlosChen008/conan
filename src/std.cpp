@@ -340,6 +340,44 @@ int main() {
         2. 在中间插入和删除元素时性能较差。
     */
 
+    // 为了有效记忆每个容器类的函数名，可以使用以下方法：
+    // 1. vector: push_back, pop_back, insert, erase, clear, size, empty, front, back, begin, end
+    // 2. list: push_back, push_front, pop_back, pop_front, insert, erase, clear, size, empty, front, back, begin, end
+    // 3. deque: push_back, push_front, pop_back, pop_front, insert, erase, clear, size, empty, front, back, begin, end
+    // 4. set: insert, erase, clear, size, empty, find, count, begin, end
+    // 5. map: insert, erase, clear, size, empty, find, count, begin, end
+    // 6. unordered_map: insert, erase, clear, size, empty, find, count, begin, end
+    // 7. unordered_set: insert, erase, clear, size, empty, find, count, begin, end
+    // 8. string: append, insert, erase, clear, size, empty, find, substr, begin, end
+    // 9. sort: sort, reverse, unique, lower_bound, upper_bound, binary_search, merge
+    // 10. priority_queue: push, pop, top, size, empty
+    // 11. stack: push, pop, top, size, empty
+    // 12. queue: push, pop, front, back, size, empty
+    // 13. list queue: push_back, pop_front, front, back, size, empty, begin, end
+    // 14. list stack: push_back, pop_back, back, size, empty, begin, end
+    // 15. deque stack: push_back, pop_back, back, size, empty, begin, end
+    // 16. deque queue: push_back, pop_front, front, back, size, empty, begin, end
+    // 17. vector stack: push_back, pop_back, back, size, empty, begin, end
+
+    // 以上这些容器类函数的命名的规则是：
+    // 1. push: 向容器中插入元素
+    // 2. pop: 从容器中移除元素
+    // 3. insert: 在容器中插入元素
+    // 4. erase: 从容器中移除元素
+    // 5. clear: 清空容器中的所有元素
+    // 6. size: 返回容器中元素的数量
+    // 7. empty: 检查容器是否为空
+    // 8. front: 返回容器中的第一个元素
+    // 9. back: 返回容器中的最后一个元素
+    // 10. begin: 返回容器的起始迭代器
+    // 11. end: 返回容器的结束迭代器
+    // 12. find: 在容器中查找指定元素
+    // 13. count: 计算容器中指定元素的数量
+    // 14. substr: 返回字符串的子串
+    // 15. sort: 对容器中的元素进行排序
+    // 16. reverse: 反转容器中的元素
+    // 17. unique: 移除容器中的重复元素
+
     return 0;
 }
 

@@ -57,4 +57,4 @@ int main() {
     cout << cache.get("4") << endl; // returns 4
     return 0;
 }
-// g++ lru.cpp -o lru.bin --std=c++17 --static
+// g++ lru.cpp -o lru.bin --std=c++17 --static -O3
