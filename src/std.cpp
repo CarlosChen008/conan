@@ -353,12 +353,7 @@ int main() {
     // 10. priority_queue: push, pop, top, size, empty
     // 11. stack: push, pop, top, size, empty
     // 12. queue: push, pop, front, back, size, empty
-    // 13. list queue: push_back, pop_front, front, back, size, empty, begin, end
-    // 14. list stack: push_back, pop_back, back, size, empty, begin, end
-    // 15. deque stack: push_back, pop_back, back, size, empty, begin, end
-    // 16. deque queue: push_back, pop_front, front, back, size, empty, begin, end
-    // 17. vector stack: push_back, pop_back, back, size, empty, begin, end
-
+ 
     // 以上这些容器类函数的命名的规则是：
     // 1. push: 向容器中插入元素
     // 2. pop: 从容器中移除元素
