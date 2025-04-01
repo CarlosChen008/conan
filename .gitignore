@@ -7,3 +7,5 @@ scripts/__pycache__/*.pyc
 src/alg/climbStairs
 data/doc_topic.dat
 data/topic_word.dat
+src/proto/*.pb.cc
+src/proto/*.pb.h
